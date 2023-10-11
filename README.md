@@ -1,5 +1,5 @@
 # Proyecto-PICA-40-B-883
-En este repositorio tenemos los códigos para reproducir los resultados del paper []
+En este repositorio tenemos los códigos para reproducir los resultados de la publicación []
 
 Ponemos a disposición notebooks para el entrenamiento del modelo YOLOv8 de detección, inferencia y exportación de datos
 ![image](https://github.com/marianbasti/Proyecto-PICA-40-B-883/assets/31198560/96f06b9e-43bb-4b84-b5fa-e49684980bb0)
@@ -26,17 +26,18 @@ El modelo de detección es una continuación de entrenamiento del modelo base ``
 
 ```image size: 640```
 
+### Métricas
 ![results](https://github.com/marianbasti/Proyecto-PICA-40-B-883/assets/31198560/8722e928-d0f9-4ffd-b778-be478eda8701)
 ![confusion_matrix_normalized](https://github.com/marianbasti/Proyecto-PICA-40-B-883/assets/31198560/9941f7ff-def9-4e1f-8b6e-f7184c7bfd3a)
-Por lo que podemos ver en la matriz de confusión, el modelo entrenado puede predecir correctamente [avispa] un 99%, [reina] un 96% y [zangano] un 88%.
+Por lo que podemos ver en la matriz de confusión, el modelo entrenado puede predecir correctamente del dataset [avispa] un 99%, [reina] un 96% y [zangano] un 88%.
 
 
 ---
 ## Detección
 Para la detección, exportamos los siguientes datos por cada avispa detectada:
-|id   |timestamp   |temp   |humidity   |largo   |ancho|movement|time|filename|
-|---|---|---|---|---|---|---|---|---|
-|Identificación única   |Día y horario de la detección   |Temperatura sensada   |Humedad sensada  |Largo promedio de la avispa  |Ancho promedio de la avispa  |Si la avispa ingresó o salió. 'in' para entrada, 'out' para salida   |Cuánto tiempo tardó en entrar o salir   |Nombre del video en el que se detectó a la avispa   |
+|id   |timestamp   |temp   |humidity   |largo   |ancho|movement|time|filename|class|conf|
+|---|---|---|---|---|---|---|---|---|---|---|
+|Identificación única   |Día y horario de la detección   |Temperatura sensada   |Humedad sensada  |Largo promedio de la avispa  |Ancho promedio de la avispa  |Si la avispa ingresó o salió. 'in' para entrada, 'out' para salida   |Cuánto tiempo tardó en entrar o salir   |Nombre del video en el que se detectó a la avispa   |Clase detectada (worker, gyne, drone)  |Confianza de la detección (0-1)  |
 
 ### Temperatura y humedad
 Al tener un ritmo de sensado cada 5 minutos, estos datos asociados a cada detección son resultado de interpolación de los datos más cercanos
@@ -51,3 +52,38 @@ En los videos podemos observar que muchas avispas merodean la entrada sin entrar
 ### Tiempo de entrada o salida
 Para el recorrido hecho, calculamos la diferencia de tiempo entre la primera y última detección.
 
+### Clase y confianza
+Durante todo el trayecto del insecto, recolectamos todas las predicciones hechas y definimos como clase la mas que haya alcanzado mayor confianza.
+
+---
+## Modo de uso
+### Google Colab
+Ponemos a disposición un [Notebook](https://colab.research.google.com/github/marianbasti/Proyecto-PICA-40-B-883/blob/main/Notebook_PICA_40_B_883.ipynb) para facilitar tanto entrenamiento como inferencia.
+
+### CLI
+• Para entrenamiento usamos el script ```train_avispas.py``` con el siguiente comando:
+
+```
+python train_avispas.py --dataset_path "directorio del dataset en formato YOLOv8"
+```
+
+O definiendo parámetros en vez de los default:
+
+```
+python train_avispas.py --dataset_path "directorio del dataset en formato YOLOv8" --epochs 100 --lr 0.015
+ ```
+
+Encontraremos en ```runs/detect/train``` los resultados del entrenamiento.
+
+
+• Para inferencia usamos el script ```detect_avispas.py``` con el siguiente comando:
+
+```
+python detect_avispas.py
+```
+
+O definiendo parámetros en vez de los default:
+
+```
+python train_avispas.py --model_path "directorio del modelo entrenado" --input_path "directorio con videos+data" --csv_output "nombre de salida del CSV" --save_vid --iou 0.7 --conf 0.6
+```
