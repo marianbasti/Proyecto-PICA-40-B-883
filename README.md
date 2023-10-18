@@ -14,7 +14,20 @@ Enlace de descarga: [Google Drive](https://drive.google.com/file/d/1skVPS8g-JSSW
 
 ---
 ## Adquicisión de datos
-TODO: Descripción de como se adquirieron las filmaciones. Controlador, cámara, la caja, donde se colocó, en que período de tiempo, como se adquirió temperatura y humedad
+### Microcontrolador y Sistema Operativo
+Utilizamos un Raspberry Pi 4 corriendo con Raspbian como sistema operativo para gestionar la adquisición de datos.
+
+### Cámara
+La cámara empleada es el Raspberry Pi Camera Module 2. El lente fue modificado para ajustar el punto focal a 12 cm, mejorando así la captura de imágenes cercanas.
+
+### Sensor de Temperatura y Humedad
+Para medir la temperatura y la humedad empleamos el sensor DHT-22, programado para realizar lecturas cada 5 minutos durante las filmaciones.
+
+### Periodo de Filmación
+El periodo de filmación y sensado se centra en los meses de marzo, abril y mayo, intervalos de tiempo donde se observa una mayor actividad de zánganos y reinas.
+
+### Ubicación y Montaje
+La cámara se coloca en una caja diseñada para la entrada del panal, capturando así los movimientos relevantes de la colonia. El sensor es colocado en la proximidad para capturar métricas ambientales, a una distancia suficiente del micocontrolador para evitar su interferencia de temperatura.
 
 ---
 ## Entrenamiento
@@ -53,7 +66,7 @@ En los videos podemos observar que muchas avispas merodean la entrada sin entrar
 Para el recorrido hecho, calculamos la diferencia de tiempo entre la primera y última detección.
 
 ### Clase y confianza
-Durante todo el trayecto del insecto, recolectamos todas las predicciones hechas y definimos como clase la mas que haya alcanzado mayor confianza.
+Durante todo el trayecto del insecto, recolectamos todas las predicciones hechas y definimos como clase la que haya alcanzado mayor confianza.
 
 ---
 ## Modo de uso
