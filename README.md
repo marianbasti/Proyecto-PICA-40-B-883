@@ -100,3 +100,10 @@ O definiendo parámetros en vez de los default:
 ```
 python train_avispas.py --model_path "directorio del modelo entrenado" --input_path "directorio con videos+data" --csv_output "nombre de salida del CSV" --save_vid --iou 0.7 --conf 0.6
 ```
+
+---
+## Observaciones y mejoras
+A través de esta experimentación observamos que:
+• La cantidad de cuadros por segundo tiene mucha influencia en la calidad de trackeo de movimiento. Nuestra adquisicion de datos a 10 FPS causó dificultades para seguir a los insectos que se mueven rápidamente y al determinar la entrada/salida de instectos, representa un margen de error cercano al 10%.
+• Las castas deben estar igualitariamente representadas en el dataset para una mayor confianza de detección. Esto incluye juntar imágenes de distintos individuos. Por ejemplo, si bien incluimos a una reina en el dataset, el modelo aprendió a identificar a esa reina específica y tiene problemas para detectarlas en otros casos.
+• Para detectar mejor una entrada o salida, es conveniente observar un recorrido más largo que evidencie más el movimiento del insecto. Esto se puede lograr modficando el artefacto en el que se coloca el controlador y la cámara en la entrada del nido.
