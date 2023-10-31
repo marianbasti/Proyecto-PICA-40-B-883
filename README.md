@@ -15,10 +15,10 @@ Enlace de descarga: [Google Drive](https://drive.google.com/file/d/1skVPS8g-JSSW
 ---
 ## Adquicisión de datos
 ### Microcontrolador y Sistema Operativo
-Utilizamos un Raspberry Pi 4 corriendo con Raspbian como sistema operativo para gestionar la adquisición de datos.
+Utilizamos un NVIDIA Jetson Nano Dev Kit B-01 para gestionar la adquisición de datos.
 
 ### Cámara
-La cámara empleada es el Raspberry Pi Camera Module 2. El lente fue modificado para ajustar el punto focal a 12 cm, mejorando así la captura de imágenes cercanas.
+La cámara empleada es el módulo IMX219-130.
 
 ### Sensor de Temperatura y Humedad
 Para medir la temperatura y la humedad empleamos el sensor DHT-22, programado para realizar lecturas cada 5 minutos durante las filmaciones.
