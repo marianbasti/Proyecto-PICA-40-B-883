@@ -2,7 +2,7 @@
 En este repositorio tenemos los códigos para reproducir los resultados de la publicación []
 
 Ponemos a disposición notebooks para el entrenamiento del modelo YOLOv8 de detección, inferencia y exportación de datos
-![image](https://github.com/marianbasti/Proyecto-PICA-40-B-883/assets/31198560/96f06b9e-43bb-4b84-b5fa-e49684980bb0)
+![image](https://github.com/marianbasti/Proyecto-PICA-40-B-883/assets/31198560/3e58b471-1fa7-4b2b-aa4b-a551c87173e0)
 
 ---
 ## Dataset
