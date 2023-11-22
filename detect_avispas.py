@@ -21,6 +21,7 @@ parser.add_argument('--tracker', type=str, default='avispa_bytetrack.yaml', help
 parser.add_argument('--distance_thresh', type=int, default=100, help='Distancia mínima en píxeles entre detecciones antes de descartarlas por los conflictos que genera')
 parser.add_argument('--threshold', type=int, default=90, help='Threshold de brillo para extraer silueta y calcular el tamaño')
 parser.add_argument('--width_crop', type=int, default=1, help='Recortar el ancho del video')
+parser.add_argument('--significant_move', type=int, default=0.7, help='Que proporción del ancho del video se considera para determinar que la avispa entró o salió')
 
 
 args = parser.parse_args()
@@ -250,7 +251,7 @@ for source in os.listdir(input_path):
             vid_writer = cv2.VideoWriter(f"{video_path.split('.mp4')[0]}.avi", cv2.VideoWriter_fourcc(*'mp4v'), fps, (img_w, img_h))
 
         # Limite para considerar salida/entrada
-        significant_move = img_w/4
+        significant_move = img_w * args.significant_move
 
         # Limite para ignorar altos y anchos (en los bordes confunde)
         border_threshold = img_w/5
