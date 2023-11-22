@@ -95,10 +95,27 @@ Encontraremos en ```runs/detect/train``` los resultados del entrenamiento.
 python detect_avispas.py
 ```
 
-O definiendo parámetros en vez de los default:
+Los siguientes argumentos están disponibles:
 
 ```
-python train_avispas.py --model_path "directorio del modelo entrenado" --input_path "directorio con videos+data" --csv_output "nombre de salida del CSV" --save_vid --iou 0.7 --conf 0.6
+options:
+  -h, --help            show this help message and exit
+  --model_path MODEL_PATH
+                        Modelo YOLOv8
+  --input_path INPUT_PATH
+                        Directorio de los videos (dd-mm-aaaa/ + sensor/)
+  --save_vid            Guardar video procesado con overlay de detecciones
+  --csv_output CSV_OUTPUT
+                        Nombre de salida para archivo CSV
+  --iou IOU             IOU
+  --conf CONF           confidence
+  --tracker TRACKER     Tracker yaml configuration
+  --overlap_thresh OVERLAP_THRESH
+                        Distancia mínima entre detecciones antes de descartarlas por los conflictos que genera
+  --threshold THRESHOLD
+                        Threshold de brillo para extraer silueta y calcular el tamaño
+  --width_crop WIDTH_CROP
+                        Recortar el ancho del video
 ```
 
 ---
