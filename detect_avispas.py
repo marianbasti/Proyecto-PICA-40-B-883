@@ -1,4 +1,4 @@
-import os, json, argparse
+import os, json, argparse, math
 import cv2
 import numpy as np
 from bisect import bisect_left
@@ -12,13 +12,13 @@ from ultralytics import YOLO
 parser = argparse.ArgumentParser(description="YOLOv8 Tracker para el proyecto PICA-40-B-883")
 
 parser.add_argument('--model_path', default='best.pt', help='Modelo YOLOv8 ')
-parser.add_argument('--input_path', default="./videos/", help='Directorio de los videos (video/ + sensordata)')
+parser.add_argument('--input_path', default="./videos/", help='Directorio de los videos (dd-mm-aaaa/ + sensor/)')
 parser.add_argument('--save_vid', action='store_true', help='Guardar video procesado')
 parser.add_argument('--csv_output', default='tracking', help='Nombre de salida para archivo CSV')
 parser.add_argument('--iou', type=float, default=0.5, help='IOU')
 parser.add_argument('--conf', type=float, default=0.5, help='confidence')
 parser.add_argument('--tracker', type=str, default='avispa_bytetrack.yaml', help='Tracker yaml configuration')
-parser.add_argument('--overlap_thresh', type=int, default=10, help='Distancia mínima entre detecciones antes de descartarlas por los conflictos que genera')
+parser.add_argument('--distance_thresh', type=int, default=100, help='Distancia mínima en píxeles entre detecciones antes de descartarlas por los conflictos que genera')
 parser.add_argument('--threshold', type=int, default=90, help='Threshold de brillo para extraer silueta y calcular el tamaño')
 parser.add_argument('--width_crop', type=int, default=1, help='Recortar el ancho del video')
 
@@ -43,51 +43,39 @@ from bisect import bisect_left
 import numpy as np
 import cv2
 
-def calculate_iou(box1: Tuple[float, float, float, float], box2: Tuple[float, float, float, float]) -> float:
+def calculate_center_distance(box1: Tuple[float, float, float, float], box2: Tuple[float, float, float, float]) -> float:
     """
-    Calcula el Intersection over Union (IoU) entre dos cuadros delimitadores.
+    Calcula la distancia euclidiana entre los centros de dos cuadros delimitadores.
 
     :param box1: Un cuadro delimitador en formato (x1, y1, x2, y2).
     :param box2: Otro cuadro delimitador en formato (x1, y1, x2, y2).
-    :return: El valor IoU entre los dos cuadros delimitadores.
+    :return: La distancia euclidiana entre los centros de los dos cuadros.
     """
-    # Coordenadas de la intersección
-    x1 = max(box1[0], box2[0])
-    y1 = max(box1[1], box2[1])
-    x2 = min(box1[2], box2[2])
-    y2 = min(box1[3], box2[3])
+    center1 = ((box1[0] + box1[2]) / 2, (box1[1] + box1[3]) / 2)
+    center2 = ((box2[0] + box2[2]) / 2, (box2[1] + box2[3]) / 2)
 
-    # Área de intersección
-    inter_area = max(0, x2 - x1) * max(0, y2 - y1)
+    distance = math.sqrt((center1[0] - center2[0]) ** 2 + (center1[1] - center2[1]) ** 2)
+    return distance
 
-    # Área de ambos cuadros
-    box1_area = (box1[2] - box1[0]) * (box1[3] - box1[1])
-    box2_area = (box2[2] - box2[0]) * (box2[3] - box2[1])
-
-    # Área de unión
-    union_area = box1_area + box2_area - inter_area
-
-    # Calcula IoU
-    iou = inter_area / union_area if union_area != 0 else 0
-
-    return iou
-
-def filter_overlapping_boxes(boxes: List[Tuple[float, float, float, float]], 
-                             track_ids: List[int], 
-                             overlap_thresh: float) -> Tuple[List[Tuple[float, float, float, float]], List[int]]:
+def filter_close_boxes(boxes: List[Tuple[float, float, float, float]], 
+                       track_ids: List[int], 
+                       distance_thresh: float) -> Tuple[List[Tuple[float, float, float, float]], List[int]]:
     """
-    Filtra los cuadros delimitadores eliminando ambos en cada par que tienen un IoU mayor que el umbral especificado.
+    Filtra los cuadros delimitadores eliminando ambos en cada par que están más cerca que el umbral de distancia especificado.
 
     :param boxes: Lista de cuadros delimitadores en formato (x1, y1, x2, y2).
     :param track_ids: Lista de identificadores de seguimiento correspondientes a cada cuadro.
-    :param overlap_thresh: Umbral de IoU para determinar la superposición.
+    :param distance_thresh: Umbral de distancia para determinar la cercanía.
     :return: Tupla de listas filtradas de cuadros delimitadores y sus correspondientes IDs de seguimiento.
     """
     keep_flags = [True] * len(boxes)
 
     for i in range(len(boxes)):
         for j in range(i + 1, len(boxes)):
-            if calculate_iou(boxes[i], boxes[j]) > overlap_thresh:
+            dist = calculate_center_distance(boxes[i], boxes[j])
+            print(f'Distancia entre deteccion: {dist}')
+            if dist < distance_thresh:
+                print(f'Removiendo {i} y {j}, distancia de {dist}')
                 keep_flags[i] = False
                 keep_flags[j] = False
 
@@ -298,7 +286,7 @@ for source in os.listdir(input_path):
 
                         # Obtenemos cajas e IDs detectadas
                         boxes = results[0].boxes.xywh.cpu()
-                        filtered_boxes, filtered_track_ids = filter_overlapping_boxes(boxes, track_ids, args.overlap_thresh)
+                        filtered_boxes, filtered_track_ids = filter_close_boxes(boxes, track_ids, args.distance_thresh)
 
                         # Por cada detección
                         for idx, (box, track_id) in enumerate(zip(boxes, track_ids)):
