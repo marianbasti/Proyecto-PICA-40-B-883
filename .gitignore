@@ -1,2 +1,5 @@
 *.csv
 *.avi
+frames/*
+runs/
+Avispas_jetson/
