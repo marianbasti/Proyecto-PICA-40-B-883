@@ -22,6 +22,7 @@ parser.add_argument('--distance_thresh', type=int, default=100, help='Distancia 
 parser.add_argument('--threshold', type=int, default=90, help='Threshold de brillo para extraer silueta y calcular el tamaño')
 parser.add_argument('--width_crop', type=int, default=1, help='Recortar el ancho del video')
 parser.add_argument('--significant_move', type=int, default=0.7, help='Que proporción del ancho del video se considera para determinar que la avispa entró o salió')
+parser.add_argument('--track_discard_less_than', type=int, default=None, help='Descartar tracks que tengan menos de cierta cantidad de detecciones')
 
 
 args = parser.parse_args()
@@ -329,6 +330,9 @@ for source in os.listdir(input_path):
                 
         # Por cada track detectado
         for id in track_history:
+            if args.track_discard_less_than:
+                if len(track_history)<args.track_discard_less_than:
+                    continue
             # Definimos si entró o salió (entrada a la izquierda, salida a la derecha)
             initial_x = track_history[id]['points'][0][0]
             final_x = track_history[id]['points'][-1][0]
