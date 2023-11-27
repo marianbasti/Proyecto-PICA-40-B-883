@@ -218,7 +218,7 @@ def refine_single_bbox(im: np.ndarray, bbox_xyxy: list) -> tuple:
 # Inicializamos el archivo de salida
 if not os.path.exists(csv_output + '.csv'):
         with open(csv_output + '.csv', 'a') as f:
-            f.write('filename,id,date,timestamp,temp,humidity,length,width,movement,time_on_screen,video_timestamp,class,conf\n')
+            f.write('filename,id,date,timestamp,temp,humidity,length,width,movement,time_on_screen,video_timestamp,p_worker,p_drone,p_gyne\n')
 
 # Por cada capeta que representa un día de filmaciones
 for source in os.listdir(input_path):
@@ -377,27 +377,23 @@ for source in os.listdir(input_path):
             # Calculamos cuanto tiempo tardó en entrar/salir
             time_taken = datetime.strptime(track_history[id]['timestamp'][-1],'%H:%M:%S.%f') - datetime.strptime(track_history[id]['timestamp'][0], '%H:%M:%S.%f')
 
-            # Clasificación vieja
-            max_index = track_history[id]['conf'].index(max(track_history[id]['conf']))
-            conf = round(track_history[id]['conf'][max_index],2)
-            #classd = track_history[id]['class'][max_index]
+            # Calculamos porcentaje de detecciones
+            total_detections=len(track_history[id]['class'])
+            class_counts = {0: 0, 1: 0, 2: 0}
 
-            # Clasificación 
-            classes = track_history[id]['class']
-            classd = 0
+            for class_type in track_history[id]['class']:
+                if class_type in class_counts:
+                    class_counts[class_type] += 1
 
-            if classes.count(0) != len(classes):
-                non_worker_classes = [cls for cls in classes if cls != 0]
-                most_common_class = max(set(non_worker_classes), key=non_worker_classes.count)
-                if non_worker_classes.count(most_common_class) / len(classes) >= 0.96:
-                    classd = most_common_class
-
+            p_worker = round(class_counts[0] / total_detections,2)
+            p_gyne = round(class_counts[1] / total_detections,2)
+            p_drone = round(class_counts[2] / total_detections,2)
 
             # Armamos el log   
             temp_str = 'N/A' if temp == 'N/A' else f"{round(float(temp), 2)}"
             humidity_str = 'N/A' if humidity == 'N/A' else f"{round(float(humidity), 2)}"
             video_timestamp = str(track['video_timestamp'][0])[:-5]
-            log_data = f"{video_path},{id},{video_path.split(' ')[0]},{str(timestamp)[:-4]},{temp_str},{humidity_str},{avg_w},{avg_h},{str_movement},{str(time_taken)[2:-4]},{video_timestamp},{classes_names[classd]},{conf}\n" #.replace(', day','')
+            log_data = f"{video_path},{id},{video_path.split(' ')[0]},{str(timestamp)[:-4]},{temp_str},{humidity_str},{avg_w},{avg_h},{str_movement},{str(time_taken)[2:-4]},{video_timestamp},{p_worker},{p_drone},{p_gyne}\n" #.replace(', day','')
 
             # Agregamos la data del video en el csv
             with open(f"{csv_output}.csv", "a") as f:
