@@ -16,13 +16,13 @@ parser.add_argument('--input_path', default="./videos/", help='Directorio de los
 parser.add_argument('--save_vid', action='store_true', help='Guardar video procesado')
 parser.add_argument('--csv_output', default='tracking', help='Nombre de salida para archivo CSV')
 parser.add_argument('--iou', type=float, default=0.5, help='IOU')
-parser.add_argument('--conf', type=float, default=0.5, help='confidence')
+parser.add_argument('--conf', type=float, default=0.73, help='confidence')
 parser.add_argument('--tracker', type=str, default='avispa_bytetrack.yaml', help='Tracker yaml configuration')
-parser.add_argument('--distance_thresh', type=int, default=100, help='Distancia mínima en píxeles entre detecciones antes de descartarlas por los conflictos que genera')
-parser.add_argument('--threshold', type=int, default=90, help='Threshold de brillo para extraer silueta y calcular el tamaño')
+parser.add_argument('--distance_thresh', type=int, default=120, help='Distancia mínima en píxeles entre detecciones antes de descartarlas por los conflictos que genera')
+parser.add_argument('--threshold', type=int, default=70, help='Threshold de brillo para extraer silueta y calcular el tamaño')
 parser.add_argument('--width_crop', type=int, default=1, help='Recortar el ancho del video')
 parser.add_argument('--significant_move', type=int, default=0.7, help='Que proporción del ancho del video se considera para determinar que la avispa entró o salió')
-parser.add_argument('--track_discard_less_than', type=int, default=None, help='Descartar tracks que tengan menos de cierta cantidad de detecciones')
+parser.add_argument('--track_discard_less_than', type=int, default=2, help='Descartar tracks que tengan menos de cierta cantidad de detecciones')
 
 
 args = parser.parse_args()
