@@ -6,11 +6,11 @@ Ponemos a disposición notebooks para el entrenamiento del modelo YOLOv8 de dete
 
 ---
 ## Dataset
-El dataset fue generado en la plataforma [Roboflow](https://roboflow.com/) anotando manualmente 4834 imágenes, aumentada a 9762 imágenes con distintas transformaciones. Utilizamos las etiquetas de [avispa], [zangano] y [reina] para incluir discriminación entre castas
+El dataset fue generado en la plataforma [Roboflow](https://roboflow.com/) anotando manualmente 1740 imágenes, aumentada a 4176 imágenes con distintas transformaciones. Separamos el dataset en un 88%-8%-4% para sets de entrenamiento-validación-test. Utilizamos las etiquetas de [avispa], [zangano] y [reina] para discriminación entre castas
 
 El formato exportado es [Ultralytics YOLOv8](https://docs.ultralytics.com/datasets/detect/)
 
-Enlace de descarga: [Google Drive](https://drive.google.com/file/d/1skVPS8g-JSSWca0zt_500vZNW5f3vPn8/view?usp=sharing)
+Enlace de descarga: [RoboFlow](https://universe.roboflow.com/ds/jdYfGOHlGu?key=JZgVkCiWdp)
 
 ---
 ## Adquicisión de datos
@@ -47,7 +47,7 @@ Por lo que podemos ver en la matriz de confusión, el modelo entrenado puede pre
 
 ---
 ## Detección
-Para la detección, exportamos los siguientes datos por cada avispa detectada:
+Para la detección usamos el modelo entrenado con el dataset que generamos. Exportamos los siguientes datos por cada avispa detectada:
 |id   |timestamp   |temp   |humidity   |length   |width|movement|time_on_screen|video_timestamp|p_worker|p_drone|p_gyne|
 |---|---|---|---|---|---|---|---|---|---|---|---|
 |Identificación única   |Día y horario de la detección   |Temperatura sensada   |Humedad sensada  |Largo promedio de la avispa  |Ancho promedio de la avispa  |Si la avispa ingresó o salió. 'in' para entrada, 'out' para salida   |Cuánto tiempo tardó en entrar o salir   |Minuto y segundo de la detección en el video   |Proporcion de detección de obrera  |Proporcion de detección de  zángano  |Proporcion de detección de reina|
