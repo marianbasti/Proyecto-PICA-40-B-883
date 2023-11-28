@@ -6,6 +6,7 @@ parser.add_argument('--model', default='yolov8n.pt', help='Modelo base para entr
 parser.add_argument('--dataset_path', default='dataset', help='Directorio del dataset en formato YOLOv8')
 parser.add_argument('--epochs', default=150, help='Cantidad de epochs de entrenamiento')
 parser.add_argument('--lr', default=0.015, help='Ritmo de aprendizaje')
+parser.add_argument('--imgsz', default=640, help='Tamaño de imagen para el entrenamiento')
 args = parser.parse_args()
 
 if __name__ == '__main__':
@@ -16,4 +17,4 @@ if __name__ == '__main__':
     model = YOLO('yolov8n.pt')
 
     # Entrenamos el modelo con el dataset
-    results = model.train(data=f'{dataset}/data.yaml', epochs=args.epochs, imgsz=640, batch=-1, lr0=args.lr)
+    results = model.train(data=f'{dataset}/data.yaml', epochs=args.epochs, imgsz=args.imgsz, batch=-1, lr0=args.lr)
