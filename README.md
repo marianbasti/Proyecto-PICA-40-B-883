@@ -48,9 +48,9 @@ Por lo que podemos ver en la matriz de confusión, el modelo entrenado puede pre
 ---
 ## Detección
 Para la detección, exportamos los siguientes datos por cada avispa detectada:
-|id   |timestamp   |temp   |humidity   |largo   |ancho|movement|time|filename|class|conf|
-|---|---|---|---|---|---|---|---|---|---|---|
-|Identificación única   |Día y horario de la detección   |Temperatura sensada   |Humedad sensada  |Largo promedio de la avispa  |Ancho promedio de la avispa  |Si la avispa ingresó o salió. 'in' para entrada, 'out' para salida   |Cuánto tiempo tardó en entrar o salir   |Nombre del video en el que se detectó a la avispa   |Clase detectada (worker, gyne, drone)  |Confianza de la detección (0-1)  |
+|id   |timestamp   |temp   |humidity   |length   |width|movement|time_on_screen|video_timestamp|p_worker|p_drone|p_gyne|
+|---|---|---|---|---|---|---|---|---|---|---|---|
+|Identificación única   |Día y horario de la detección   |Temperatura sensada   |Humedad sensada  |Largo promedio de la avispa  |Ancho promedio de la avispa  |Si la avispa ingresó o salió. 'in' para entrada, 'out' para salida   |Cuánto tiempo tardó en entrar o salir   |Minuto y segundo de la detección en el video   |Proporcion de detección de obrera  |Proporcion de detección de  zángano  |Proporcion de detección de reina|
 
 ### Temperatura y humedad
 Al tener un ritmo de sensado cada 5 minutos, estos datos asociados a cada detección son resultado de interpolación de los datos más cercanos
@@ -60,13 +60,13 @@ Al tener un ritmo de sensado cada 5 minutos, estos datos asociados a cada detecc
 Comienza con un recuadro del área de interés generado por YOLOv8. Luego con post-procesamiento refinamos la imagen para obtener solamente el cuerpo del insecto, recortando antenas, alas y patas. Generamos el contorno de esa silueta y buscamos el rectángulo con menor área que encapsule esa silueta, para después reorientar el rectángulo y adquirir su alto y ancho. Por último, promediamos los valores a lo largo de todo el recorrido que hizo la avispa excluyendo aquellas medidas obtenidas en los extremos de la imagen (ya que el brillo es inconsistente en estas áras)
 
 ### Movimiento
-En los videos podemos observar que muchas avispas merodean la entrada sin entrar ni salir. Por eso, solo registramos a aquellas que superen cierto umbral de movimiento lateral para considerar que entraron o salieron del panal.
+En los videos podemos observar que muchas avispas merodean la entrada sin entrar ni salir. Por eso, determinamos un umbral horizontal a superar para determinar si entró (in), salió (out) o ninguna (undetermined).
 
 ### Tiempo de entrada o salida
 Para el recorrido hecho, calculamos la diferencia de tiempo entre la primera y última detección.
 
-### Clase y confianza
-Durante todo el trayecto del insecto, recolectamos todas las predicciones hechas y definimos como clase la que haya alcanzado mayor confianza.
+### Clase
+Durante todo el trayecto del insecto, recolectamos una predicción de clase por cada frame. Luego calculamos y guardamos que proporción de todas las detecciones corresponde a cada una.
 
 ---
 ## Modo de uso
@@ -104,18 +104,23 @@ options:
                         Modelo YOLOv8
   --input_path INPUT_PATH
                         Directorio de los videos (dd-mm-aaaa/ + sensor/)
-  --save_vid            Guardar video procesado con overlay de detecciones
+  --save_vid            Guardar video procesado
   --csv_output CSV_OUTPUT
                         Nombre de salida para archivo CSV
   --iou IOU             IOU
   --conf CONF           confidence
   --tracker TRACKER     Tracker yaml configuration
-  --overlap_thresh OVERLAP_THRESH
-                        Distancia mínima entre detecciones antes de descartarlas por los conflictos que genera
+  --distance_thresh DISTANCE_THRESH
+                        Distancia mínima en píxeles entre detecciones antes de descartarlas por los conflictos que
+                        genera
   --threshold THRESHOLD
                         Threshold de brillo para extraer silueta y calcular el tamaño
   --width_crop WIDTH_CROP
                         Recortar el ancho del video
+  --significant_move SIGNIFICANT_MOVE
+                        Que proporción del ancho del video se considera para determinar que la avispa entró o salió
+  --track_discard_less_than TRACK_DISCARD_LESS_THAN
+                        Descartar tracks que tengan menos de cierta cantidad de detecciones
 ```
 
 ---
@@ -124,6 +129,6 @@ A través de esta experimentación observamos que:
 
 • La cantidad de cuadros por segundo tiene mucha influencia en la calidad de trackeo de movimiento. Nuestra adquisicion de datos a 10 FPS causó dificultades para seguir a los insectos que se mueven rápidamente y al determinar la entrada/salida de instectos, representa un margen de error cercano al 10%.
 
-• Las castas deben estar igualitariamente representadas en el dataset para una mayor confianza de detección. Esto incluye juntar imágenes de distintos individuos. Por ejemplo, si bien incluimos a una reina en el dataset, el modelo aprendió a identificar a esa reina específica y tiene problemas para detectarlas en otros casos.
+• Las castas deben estar igualitariamente representadas en el dataset para una mayor confianza de detección. Cuando una clase esta sobrerepresentada, tendremos un sesgo a clasificarla como tal. 
 
 • Para detectar mejor una entrada o salida, es conveniente observar un recorrido más largo que evidencie más el movimiento del insecto. Esto se puede lograr modficando el artefacto en el que se coloca el controlador y la cámara en la entrada del nido.

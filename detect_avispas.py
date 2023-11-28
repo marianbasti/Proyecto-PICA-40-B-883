@@ -377,7 +377,7 @@ for source in os.listdir(input_path):
             # Calculamos cuanto tiempo tardó en entrar/salir
             time_taken = datetime.strptime(track_history[id]['timestamp'][-1],'%H:%M:%S.%f') - datetime.strptime(track_history[id]['timestamp'][0], '%H:%M:%S.%f')
 
-            # Calculamos porcentaje de detecciones
+            # Calculamos proporción de detecciones para cada clase
             total_detections=len(track_history[id]['class'])
             class_counts = {0: 0, 1: 0, 2: 0}
 
