@@ -1,7 +1,16 @@
 import picamera
 import datetime as dt
-import os
+import os, platform
 import argparse
+
+# Checkea OS para determinar librería a usar
+# Raspberry Pi: linux
+if platform.machine=='armv71':
+    import picamera
+else 'aarch64':
+    # Libreria para Jetson?
+else:
+    raise Exception(f"OS no reconocido:{platform.machine}")
 
 # Parsea los argumentos de la línea de comandos
 parser = argparse.ArgumentParser(description='Configura la cámara para grabar.')
