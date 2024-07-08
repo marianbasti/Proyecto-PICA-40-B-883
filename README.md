@@ -1,12 +1,15 @@
-# Proyecto-PICA-40-B-883
-En este repositorio tenemos los códigos para reproducir los resultados de la publicación []
+# [Advancing social insect research through the development of an automated yellowjacket nest activity monitoring station using deep learning](http://img.shields.io/badge/DOI-10.1111/afe.12638-12DD11.svg)
+[![DOI:10.1111/afe.12638](http://img.shields.io/badge/DOI-10.1111/afe.12638-12DD11.svg)](https://onlinelibrary.wiley.com/share/author/DH4HTNWQRZCENIATQ7P6?target=10.1111/afe.12638)
+---
 
-Ponemos a disposición notebooks para el entrenamiento del modelo YOLOv8 de detección, inferencia y exportación de datos
+En este repositorio tenemos los códigos para reproducir los resultados de nuestra publicación.
+Ponemos a disposición notebooks para el entrenamiento del modelo YOLOv8 de detección, inferencia y exportación de datos.
+
 ![image](https://github.com/marianbasti/Proyecto-PICA-40-B-883/assets/31198560/3e58b471-1fa7-4b2b-aa4b-a551c87173e0)
 
 ---
 ## Dataset
-El dataset fue generado en la plataforma [Roboflow](https://roboflow.com/) anotando manualmente 1740 imágenes, aumentada a 4176 imágenes con distintas transformaciones. Separamos el dataset en un 88%-8%-4% para sets de entrenamiento-validación-test. Utilizamos las etiquetas de [avispa], [zangano] y [reina] para discriminación entre castas
+El dataset fue anotado y generado en la plataforma [Roboflow](https://roboflow.com/) anotando manualmente 1740 imágenes, aumentada a 4176 imágenes con distintas transformaciones. Separamos el dataset en un 88%-8%-4% para sets de entrenamiento-validación-test. Utilizamos las etiquetas de [avispa], [zangano] y [reina] para discriminación entre castas
 
 El formato exportado es [Ultralytics YOLOv8](https://docs.ultralytics.com/datasets/detect/)
 
